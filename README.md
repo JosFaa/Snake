@@ -12,7 +12,7 @@ make
 make run
 ```
 ## Controls 
-W - move up
-A - move left
-S - move down
-D - move right
+- `W` - move up
+- `A` - move left
+- `S` - move down
+- `D` - move right
