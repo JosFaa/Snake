@@ -7,8 +7,8 @@
 using std::cout, std::endl, std::cin;
 using std::vector;
 
-int row = 7;
-int col = 7;
+int row = 3;
+int col = 3;
 
 std::random_device rd; //random seed generator 
 std::mt19937 gen(rd()); // random number gen
@@ -84,6 +84,8 @@ void moveSnake(char input, vector<Position>& snake) {
 }
 
 Position spawnFood(const vector<Position>& foods, const vector<Position>& snake) {
+    cout << "calling spawnfood()" << endl;
+    
     bool valid = false; 
     int randomCol; int randomRow;
 
@@ -142,11 +144,6 @@ void endGame(bool& gameLoop, const vector<Position>& snake) {
 }
 
 int main() {
-
-    bool gameLoop = true;
-    char input;
-    int foodCollision = -1;
-
     vector<Position> snake;
     
     snake.push_back({col/2, row/2});
@@ -155,16 +152,17 @@ int main() {
 
 
     vector<Position> foods;
-    
+
+    bool gameLoop = true;
+    char input;
+    int foodCollision = -1;
+    int totalCells = row * col;
 
     for (int i =0; i<FOOD_COUNT; i++) {
         foods.push_back(spawnFood(foods, snake));
     }
 
     while (gameLoop) {
-        for (int i=0; i<foods.size(); i++) {
-            cout << "food" << i << " at (" << foods[i].x << ", " << foods[i].y << ")" << endl;
-        }
         printBoard(foods, snake);
 
         Position oldTail = snake.back();
@@ -175,7 +173,14 @@ int main() {
         if (foodCollision != -1) {
             snake.push_back(oldTail);
             removeFood(foods, foodCollision);
-            foods.push_back(spawnFood(foods, snake));
+            if (snake.size() >= totalCells) {
+                cout << "You win!" << endl;
+                return 0;
+            }
+                int occupiedCells = snake.size() + foods.size();
+                if (occupiedCells < totalCells) {
+                    foods.push_back(spawnFood(foods, snake));
+                }
         }
         
         endGame(gameLoop, snake);
