@@ -5,13 +5,13 @@
 #include <thread>
 #include <chrono>
 
-#define FOOD_COUNT 5
+#define FOOD_COUNT 2
 
 using std::cout, std::endl, std::cin;
 using std::vector;
 
-int row = 3;
-int col = 3;
+int row = 15;
+int col = 30;
 
 std::random_device rd; //random seed generator 
 std::mt19937 gen(rd()); // random number gen
@@ -61,10 +61,10 @@ void printBoard(const vector<Position>& foods, const vector<Position>& snake) {
 
 bool reverseDirection(char current, char requested) {
     bool reversing = (
-        current == 'w' && requested == 's' ||
-        current == 's' && requested == 'w' || 
-        current == 'd' && requested == 'a' || 
-        current == 'a' && requested == 'd'
+        (current == 'w' && requested == 's') ||
+        (current == 's' && requested == 'w') || 
+        (current == 'd' && requested == 'a') || 
+        (current == 'a' && requested == 'd')
     );
     return reversing;
 }
@@ -180,20 +180,21 @@ int main() {
     }
 
     char currentDirection = 'd';
+    char nextDirection = 'd';
 
     auto lastUpdate = std::chrono::steady_clock::now();
 
     while (gameLoop) {
         Position oldTail = snake.back();
         int requestedDirection = getch();
-        if (requestedDirection != ERR) {
-            if (!reverseDirection(currentDirection, requestedDirection)) {
-                currentDirection = requestedDirection;
+        if (requestedDirection != ERR &&!reverseDirection(currentDirection, requestedDirection)) {
+                nextDirection = requestedDirection;
             }
-        }
+        
         auto now = std::chrono::steady_clock::now();
 
         if (now - lastUpdate >= std::chrono::milliseconds(250)) {
+            currentDirection = nextDirection;
             moveSnake(currentDirection, snake);
     
             foodCollision = checkFoodCollision(foods, snake);
