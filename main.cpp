@@ -10,8 +10,8 @@
 using std::cout, std::endl, std::cin;
 using std::vector;
 
-int row = 17;
-int col = 33;
+int row = 3;
+int col = 3;
 
 std::random_device rd; //random seed generator 
 std::mt19937 gen(rd()); // random number gen
@@ -153,7 +153,6 @@ void endGame(bool& gameLoop, const vector<Position>& snake) {
     }
     if (outsideArea or bodyCollision) {
             gameLoop = false;
-            cout << "Game Over!" << endl;
         }
 }
 
@@ -161,9 +160,7 @@ int main() {
     initscr();      //inits ncurses
     noecho();       //don't show typed keys 
     curs_set(0);    //no cursor 
-
     nodelay(stdscr, true);
-
 
     vector<Position> snake;
     
@@ -172,11 +169,9 @@ int main() {
     snake.push_back({col/2 - 1, row/2});
     snake.push_back({col/2 - 2, row/2});
 
-
     vector<Position> foods;
 
     bool gameLoop = true;
-    char input;
     int foodCollision = -1;
     int totalCells = row * col;
 
@@ -186,9 +181,9 @@ int main() {
 
     char currentDirection = 'd';
 
-    while (gameLoop) {
-        printBoard(foods, snake);
+    auto lastUpdate = std::chrono::steady_clock::now();
 
+    while (gameLoop) {
         Position oldTail = snake.back();
         int requestedDirection = getch();
         if (requestedDirection != ERR) {
@@ -196,27 +191,34 @@ int main() {
                 currentDirection = requestedDirection;
             }
         }
-        moveSnake(currentDirection, snake);
+        auto now = std::chrono::steady_clock::now();
 
-        foodCollision = checkFoodCollision(foods, snake);
-        if (foodCollision != -1) {
-            snake.push_back(oldTail);
-            removeFood(foods, foodCollision);
-            if (snake.size() >= totalCells) {
-                cout << "You win!" << endl;
-                endwin();
-                return 0;
-            }
-                int occupiedCells = snake.size() + foods.size();
-                if (occupiedCells < totalCells) {
-                    foods.push_back(spawnFood(foods, snake));
+        if (now - lastUpdate >= std::chrono::milliseconds(250)) {
+            moveSnake(currentDirection, snake);
+    
+            foodCollision = checkFoodCollision(foods, snake);
+            if (foodCollision != -1) {
+                snake.push_back(oldTail);
+                removeFood(foods, foodCollision);
+                if (snake.size() >= totalCells) {
+                    endwin();
+                    cout << "You win!" << endl;
+                    return 0;
                 }
+                    int occupiedCells = snake.size() + foods.size();
+                    if (occupiedCells < totalCells) {
+                        foods.push_back(spawnFood(foods, snake));
+                    }
+            }
+            printBoard(foods, snake);
+            lastUpdate = now;
         }
         std::this_thread::sleep_for(
-            std::chrono::milliseconds(250)
+            std::chrono::milliseconds(10)
         );
         endGame(gameLoop, snake);
     }
     endwin();
+    cout << "Game Over!" << endl;
     return 0;
 }
