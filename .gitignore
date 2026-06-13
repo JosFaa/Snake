@@ -1,0 +1,11 @@
+# Executables
+snake
+main.exe
+*.exe
+*.out
+
+# Build directories
+build/
+
+# macOS
+.DS_Store
