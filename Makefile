@@ -3,10 +3,10 @@ CXX_FLAGS = -std=c++17 -Wall -Wextra -Wshadow
 TARGET = snake
 
 $(TARGET): main.cpp 
-	$(CXX) $(CXX_FLAGS) main.cpp -o $(TARGET).exe
+	$(CXX) $(CXX_FLAGS) main.cpp -o $(TARGET)
 
 run: $(TARGET)
-	./$(TARGET).exe
+	./$(TARGET)
 
 clean:
-	rm -f $(TARGET).exe
+	rm -f $(TARGET)
