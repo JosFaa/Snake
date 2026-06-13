@@ -1,14 +1,17 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <ncurses.h>
+#include <thread>
+#include <chrono>
 
-#define FOOD_COUNT 2
+#define FOOD_COUNT 5
 
 using std::cout, std::endl, std::cin;
 using std::vector;
 
-int row = 3;
-int col = 3;
+int row = 17;
+int col = 33;
 
 std::random_device rd; //random seed generator 
 std::mt19937 gen(rd()); // random number gen
@@ -24,6 +27,8 @@ void printBoard(const vector<Position>& foods, const vector<Position>& snake) {
     bool foodHere = false;
     bool headHere = false;
     bool bodyHere = false;
+
+    erase();
 
     for (int y=0; y<row; y++) {
         for (int x=0; x<col; x++) {
@@ -41,17 +46,17 @@ void printBoard(const vector<Position>& foods, const vector<Position>& snake) {
                 }       
             }
 
-            if (headHere) {cout << "@";}
-            else if (bodyHere) {cout << "o";}
-            else if (foodHere) {cout << "*";}
-            else {cout << ".";}
+            if (headHere) {mvaddch(y, x, '@');}
+            else if (bodyHere) {mvaddch(y, x, 'o');}
+            else if (foodHere) {mvaddch(y, x, '*');}
+            else {mvaddch(y, x, '.');}
 
             foodHere = false;
             headHere = false;
             bodyHere = false;
         }
-        cout << endl;
     }
+    refresh();
 }
 
 bool reverseDirection(char current, char requested) {
@@ -94,7 +99,6 @@ void moveSnake(char input, vector<Position>& snake) {
 }
 
 Position spawnFood(const vector<Position>& foods, const vector<Position>& snake) {
-    cout << "calling spawnfood()" << endl;
     
     bool valid = false; 
     int randomCol; int randomRow;
@@ -154,6 +158,13 @@ void endGame(bool& gameLoop, const vector<Position>& snake) {
 }
 
 int main() {
+    initscr();      //inits ncurses
+    noecho();       //don't show typed keys 
+    curs_set(0);    //no cursor 
+
+    nodelay(stdscr, true);
+
+
     vector<Position> snake;
     
     // Snake starter body
@@ -179,12 +190,13 @@ int main() {
         printBoard(foods, snake);
 
         Position oldTail = snake.back();
-        cin >> input;
-        char requestedDirection = input;
-        if (!reverseDirection(currentDirection, requestedDirection)) {
-            moveSnake(input, snake);
-            currentDirection = requestedDirection;
+        int requestedDirection = getch();
+        if (requestedDirection != ERR) {
+            if (!reverseDirection(currentDirection, requestedDirection)) {
+                currentDirection = requestedDirection;
+            }
         }
+        moveSnake(currentDirection, snake);
 
         foodCollision = checkFoodCollision(foods, snake);
         if (foodCollision != -1) {
@@ -192,6 +204,7 @@ int main() {
             removeFood(foods, foodCollision);
             if (snake.size() >= totalCells) {
                 cout << "You win!" << endl;
+                endwin();
                 return 0;
             }
                 int occupiedCells = snake.size() + foods.size();
@@ -199,8 +212,11 @@ int main() {
                     foods.push_back(spawnFood(foods, snake));
                 }
         }
-        
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(250)
+        );
         endGame(gameLoop, snake);
     }
+    endwin();
     return 0;
 }
