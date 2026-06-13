@@ -54,6 +54,16 @@ void printBoard(const vector<Position>& foods, const vector<Position>& snake) {
     }
 }
 
+bool reverseDirection(char current, char requested) {
+    bool reversing = (
+        current == 'w' && requested == 's' ||
+        current == 's' && requested == 'w' || 
+        current == 'd' && requested == 'a' || 
+        current == 'a' && requested == 'd'
+    );
+    return reversing;
+}
+
 void moveSnake(char input, vector<Position>& snake) {
     int dx = 0;
     int dy = 0;
@@ -146,6 +156,7 @@ void endGame(bool& gameLoop, const vector<Position>& snake) {
 int main() {
     vector<Position> snake;
     
+    // Snake starter body
     snake.push_back({col/2, row/2});
     snake.push_back({col/2 - 1, row/2});
     snake.push_back({col/2 - 2, row/2});
@@ -162,12 +173,18 @@ int main() {
         foods.push_back(spawnFood(foods, snake));
     }
 
+    char currentDirection = 'd';
+
     while (gameLoop) {
         printBoard(foods, snake);
 
         Position oldTail = snake.back();
         cin >> input;
-        moveSnake(input, snake);
+        char requestedDirection = input;
+        if (!reverseDirection(currentDirection, requestedDirection)) {
+            moveSnake(input, snake);
+            currentDirection = requestedDirection;
+        }
 
         foodCollision = checkFoodCollision(foods, snake);
         if (foodCollision != -1) {
