@@ -32,13 +32,13 @@ void printBoard(const vector<Position>& foods, const vector<Position>& snake) {
 
     for (int y=0; y<row; y++) {
         for (int x=0; x<col; x++) {
-            for (int i=0; i<foods.size(); i++) {
+            for (size_t i=0; i<foods.size(); i++) {
                 if (foods[i].x == x and foods[i].y == y) {
                     foodHere = true;
                 }
             }
 
-            for (int i=0; i<snake.size(); i++) {
+            for (size_t i=0; i<snake.size(); i++) {
                 if (snake[i].x == x and snake[i].y == y) {
                     if (i == 0) {
                         headHere = true;
@@ -90,8 +90,8 @@ void moveSnake(char input, vector<Position>& snake) {
             return;
     }
 
-    for (int i = snake.size() - 1; i > 0; --i) {
-        snake[i] = snake[i - 1];
+    for (size_t i = snake.size(); i > 1; --i) {
+        snake[i - 1] = snake[i - 2];
     }
 
     snake[0].x += dx;
@@ -108,13 +108,13 @@ Position spawnFood(const vector<Position>& foods, const vector<Position>& snake)
         randomRow = rowDist(gen);
         valid = true; 
 
-        for (int i=0; i<foods.size(); i++) {
+        for (size_t i=0; i<foods.size(); i++) {
             if (randomCol == foods[i].x and randomRow == foods[i].y) {
                 valid = false; 
                 break;
             }
         }
-        for (int i=0; i<snake.size(); i++) {
+        for (size_t i=0; i<snake.size(); i++) {
             if (randomCol == snake[i].x and randomRow == snake[i].y) {
                 valid = false; 
             }
@@ -125,7 +125,7 @@ Position spawnFood(const vector<Position>& foods, const vector<Position>& snake)
 }
 
 int checkFoodCollision(const vector<Position>& foods, const vector<Position>& snake) {
-    for (int i=0; i<foods.size(); i++) {
+    for (size_t i=0; i<foods.size(); i++) {
         if (foods[i].x == snake[0].x and foods[i].y == snake[0].y) {
             return i;      
         }
@@ -143,7 +143,7 @@ void endGame(bool& gameLoop, const vector<Position>& snake) {
     bool outsideArea = snake[0].y < 0 or snake[0].y >= row or snake[0].x < 0 or snake[0].x >= col;
     bool bodyCollision = false; 
 
-    for (int i = 1; i<snake.size(); i++) {
+    for (size_t i = 1; i<snake.size(); i++) {
         if (snake[0].x == snake[i].x and 
         snake[0].y == snake[i].y) {
             bodyCollision = true;
@@ -173,7 +173,7 @@ int main() {
 
     bool gameLoop = true;
     int foodCollision = -1;
-    int totalCells = row * col;
+    size_t totalCells = static_cast<size_t>(row) * static_cast<size_t>(col);
 
     for (int i =0; i<FOOD_COUNT; i++) {
         foods.push_back(spawnFood(foods, snake));
@@ -206,7 +206,7 @@ int main() {
                     cout << "You win!" << endl;
                     return 0;
                 }
-                    int occupiedCells = snake.size() + foods.size();
+                    size_t occupiedCells = snake.size() + foods.size();
                     if (occupiedCells < totalCells) {
                         foods.push_back(spawnFood(foods, snake));
                     }
