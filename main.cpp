@@ -10,19 +10,60 @@
 using std::cout, std::endl, std::cin;
 using std::vector;
 
-int row = 15;
-int col = 30;
+int row = 20;
+int col = 20;
 
 std::random_device rd; //random seed generator 
 std::mt19937 gen(rd()); // random number gen
-std::uniform_int_distribution<> rowDist(0, row-1); 
-std::uniform_int_distribution<> colDist(0, col-1);
 
 struct Position {
     int x;
     int y;
 };
 
+void chooseMap() {
+    vector<std::string>options = {
+        "Small",
+        "Medium",
+        "Large"
+    };
+
+    bool validChoice = false;
+
+    int choice = 0;
+    cout << "Select grid size:" << endl;
+    for (size_t i = 0; i<options.size(); i++) {
+        cout << i + 1 << ". " << options[i] << endl;
+    }
+    
+    while (!validChoice) {
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Please enter a number." << endl;
+            continue;
+        }
+        if (choice >= 1 && choice <=3) {
+            switch (choice) {
+                case 1: 
+                    row = 10;
+                    col = 10;
+                    validChoice = true;
+                    break;
+                case 2: 
+                    row = 15;
+                    col = 15;
+                    validChoice = true;
+                    break;
+                case 3: 
+                    row = 20;
+                    col = 20;
+                    validChoice = true;
+                    break;
+            }
+        } else {cout << "Number must be between 1 and 3" << endl;}
+    }
+}
 void printBoard(const vector<Position>& foods, const vector<Position>& snake) {
     bool foodHere = false;
     bool headHere = false;
@@ -99,6 +140,9 @@ void moveSnake(char input, vector<Position>& snake) {
 }
 
 Position spawnFood(const vector<Position>& foods, const vector<Position>& snake) {
+
+    std::uniform_int_distribution<> rowDist(0, row-1); 
+    std::uniform_int_distribution<> colDist(0, col-1);
     
     bool valid = false; 
     int randomCol; int randomRow;
@@ -157,6 +201,8 @@ void endGame(bool& gameLoop, const vector<Position>& snake) {
 }
 
 int main() {
+    chooseMap();
+
     initscr();      //inits ncurses
     noecho();       //don't show typed keys 
     curs_set(0);    //no cursor 
