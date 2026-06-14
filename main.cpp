@@ -233,8 +233,13 @@ int main() {
     while (gameLoop) {
         Position oldTail = snake.back();
         int requestedDirection = getch();
+        bool validKey = (requestedDirection == 'w' || 
+            requestedDirection == 'a' || 
+            requestedDirection == 's' || 
+            requestedDirection == 'd');
+
         if (requestedDirection != ERR &&!reverseDirection(currentDirection, requestedDirection)) {
-                nextDirection = requestedDirection;
+                if (validKey) {nextDirection = requestedDirection;}
             }
         
         auto now = std::chrono::steady_clock::now();
