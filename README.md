@@ -4,7 +4,7 @@ A simple terminal-based Snake game built in C++.
 This is my first C++ project. This project helped me practice game loops, real time input, vectors, random spawning and collision detection. 
 
 ## Demo
-![Snake gameplay](assets/snake_demo.gifc)
+![Snake gameplay](assets/snake_demo.gif)
 
 ## Features
 - Automatic snake movement
