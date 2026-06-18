@@ -1,7 +1,10 @@
 # Snake 
 
 A simple terminal-based Snake game built in C++.
-This is my first C++ project. 
+This is my first C++ project. This project helped me practice game loops, real time input, vectors, random spawning and collision detection. 
+
+## Demo
+![Snake gameplay](assets/snake_demo.gifc)
 
 ## Features
 - Automatic snake movement
@@ -16,12 +19,9 @@ This is my first C++ project.
 - ncurses
 - Terminal large enough to display it
 
-## Build 
+## Build & Run 
 ```bash
 make 
-```
-## Run
-```bash
 make run
 ```
 ## Controls 
@@ -29,3 +29,9 @@ make run
 - `A` - move left
 - `S` - move down
 - `D` - move right
+
+## Future Improvements 
+- Add score 
+- Add pause/restart
+- Add colors 
+- Save high scores
